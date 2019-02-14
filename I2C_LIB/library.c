@@ -27,19 +27,37 @@
 #define SDA_LOW() (SDA_DDR = (SDA_DDR | (1 << SDA_MASK)))
 #define SDA_READ() ((SDA_PIN & (1 << SDA_MASK)) == (1 << SDA_MASK))
 
-/************************************************************************/
-/* constant for I2C delay in µs                                         */
-/************************************************************************/
-#define DELAYTIME 5
-
-#define delay_I2C() _delay_us(DELAYTIME)
+double delaytime = 5;
+char delayunit = 'u';
 
 typedef enum{FALSE, TRUE} boolean;
+	
+void sendBit(char bit);
 
-void initI2C()
+/************************************************************************/
+/* unit: u for µs, m for ms                                             */
+/************************************************************************/
+void initI2C(double time, char unit)
 {
+	delaytime = time;
+	delayunit = unit;
+	
 	SCL_HIGH();
 	SDA_HIGH();
+}	
+
+void delay_I2C()
+{
+	switch(delayunit)
+	{
+		case 'u':
+			_delay_us(delaytime);
+			break;
+			
+		case 'm':
+			_delay_ms(delaytime);
+			break;
+	}
 }
 
 void sendStartCondition()
@@ -110,6 +128,39 @@ boolean sendByte(char byte)
 	delay_I2C();
 
 	return ack;
+}
+
+char readByte(char slaveAddress)
+{
+	char byte = 0b00000000;
+	
+	//force read mode
+	slaveAddress |= 0b00000001;
+	
+	SCL_LOW();
+	
+	// write address to slave
+	if(sendByte(slaveAddress))
+	{
+		SCL_LOW();
+		SDA_HIGH();
+		
+		// read byte from slave
+		for(int i = 7; i >= 0; i--)
+		{
+			delay_I2C();
+			
+			SCL_HIGH();
+			
+			delay_I2C();
+			
+			byte |= (SDA_READ() << i);
+			
+			SCL_LOW();
+		}
+	}
+	
+	return byte;
 }
 
 void sendBit(char bit)
