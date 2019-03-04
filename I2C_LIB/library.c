@@ -88,7 +88,7 @@ void sendStopCondition()
 	SDA_HIGH();
 }
 
-boolean sendByte(char byte)
+boolean sendByte(unsigned char byte)
 {
 	SCL_LOW();
 	
@@ -130,9 +130,9 @@ boolean sendByte(char byte)
 	return ack;
 }
 
-char readSlave(char slaveAddress)
+unsigned char readSlave(unsigned char slaveAddress)
 {
-	char byte = 0b00000000;
+	unsigned char byte = 0b00000000;
 	
 	//force read mode
 	slaveAddress |= 0b00000001;
@@ -163,15 +163,15 @@ char readSlave(char slaveAddress)
 	return byte;
 }
 
-char readRegister(char slaveAddress, char registerAddress)
+unsigned char readRegister(unsigned char slaveAddress, unsigned char registerAddress)
 {
-	char byte = 0b00000000;
+	unsigned char byte = 0b00000000;
 	
 	//force write mode
-	char slaveAddressW = slaveAddress & 0b11111110;
+	unsigned char slaveAddressW = slaveAddress & 0b11111110;
 	
 	//force read mode
-	char slaveAddressR = slaveAddress | 0b00000001;
+	unsigned char slaveAddressR = slaveAddress | 0b00000001;
 	
 	SCL_LOW();
 	
