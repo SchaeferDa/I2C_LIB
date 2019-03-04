@@ -130,7 +130,7 @@ boolean sendByte(char byte)
 	return ack;
 }
 
-char readByte(char slaveAddress)
+char readSlave(char slaveAddress)
 {
 	char byte = 0b00000000;
 	
@@ -141,6 +141,50 @@ char readByte(char slaveAddress)
 	
 	// write address to slave
 	if(sendByte(slaveAddress))
+	{
+		SCL_LOW();
+		SDA_HIGH();
+		
+		// read byte from slave
+		for(int i = 7; i >= 0; i--)
+		{
+			delay_I2C();
+			
+			SCL_HIGH();
+			
+			delay_I2C();
+			
+			byte |= (SDA_READ() << i);
+			
+			SCL_LOW();
+		}
+	}
+	
+	return byte;
+}
+
+char readRegister(char slaveAddress, char registerAddress)
+{
+	char byte = 0b00000000;
+	
+	//force write mode
+	char slaveAddressW = slaveAddress & 0b11111110;
+	
+	//force read mode
+	char slaveAddressR = slaveAddress | 0b00000001;
+	
+	SCL_LOW();
+	
+	//choose register
+	sendStartCondition();
+	sendByte(slaveAddressW);
+	sendByte(registerAddress);
+	
+	// establish new connection
+	sendStartCondition();
+	
+	// get register from slave
+	if(sendByte(slaveAddressR))
 	{
 		SCL_LOW();
 		SDA_HIGH();
