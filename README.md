@@ -15,7 +15,7 @@ The I2C_LIB is written for Atmel ATmega328P and developed with Atmel Studio 7.0 
 - The library works for the Philips-I²C-Specification
 
 ## Usage
-### Initalize I²C-Bus
+### initalize I²C-Bus
 ```c
 void initI2C(double time, char unit);
 ```
