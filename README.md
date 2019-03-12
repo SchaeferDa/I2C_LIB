@@ -19,8 +19,8 @@ The I2C_LIB is written for Atmel ATmega328P and developed with Atmel Studio 7.0 
 ```c
 void initI2C(double time, char unit);
 ```
-*set unit 'u' for µs
-set unir 'm' for ms*
+*set unit 'u' for µs  
+set unir 'm' for ms*  
 
 > parameters are optional  
 > by default Bus is set to 5µs
