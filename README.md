@@ -22,7 +22,7 @@ void initI2C(double time, char unit);
 *set unit 'u' for µs
 set unir 'm' for ms*
 
-> parameters are optional
+> parameters are optional  
 > by default Bus is set to 5µs
 
 ### send start condition
